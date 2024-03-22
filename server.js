@@ -1,4 +1,5 @@
 const express = require('express'); // pobieramy klase express do serwera www
+const socketio = require('socket.io');
 
 const app = express(); // pobieram instancje serwera
 
@@ -13,7 +14,7 @@ const serwer = app.listen(80, ()=>{
     console.log("serwer start: http://localhost/");
 });
 // dodanie soketów do komunikacji online
-const io = require('socket.io', serwer, {
+const io = socketio(serwer, {
     // zgoda na komunikacje z innych adresów internetoweych cors(GET, POST)
     cors: {
         origin: "*", // adresy dozwolone
@@ -22,12 +23,39 @@ const io = require('socket.io', serwer, {
       },
 })
 
+let ClientDB = [];
+
+const CID = socketid => ClientDB.filter(e=>e.socketid == socketid)[0];
+// function CID1(socketid){
+//     return ClientDB.filter(e=>e.socketid == socketid)[0];
+// }
+
 io.on('connection', klient=>{
     console.log("Klient nawiązał połączenie", klient.id);
 
     // 
+    klient.on('wiadomosc', (wiadomosc)=>{
+        
+        let client = CID(klient.id);
+        if(client)
+        {
+            //console.log(wiadomosc, client);
+            io.sockets.emit('wiadomosc', wiadomosc, client.Klient);
+        }
+    })
+
     klient.on('witaj', (klientNazwa)=>{
         console.log("Witaj", klientNazwa);
+
+        let client = CID(klient.id);
+        if(!client)
+        {
+            ClientDB.push({
+                Klient: klientNazwa,
+                socketid: klient.id
+            });
+        } 
+
     })
 
 })
