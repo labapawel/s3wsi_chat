@@ -26,6 +26,7 @@ const io = socketio(serwer, {
 let ClientDB = [];
 
 const CID = socketid => ClientDB.filter(e=>e.socketid == socketid)[0];
+const KID = idKlienta => ClientDB.filter(e=>e.id == idKlienta)[0];
 // function CID1(socketid){
 //     return ClientDB.filter(e=>e.socketid == socketid)[0];
 // }
@@ -39,22 +40,33 @@ io.on('connection', klient=>{
         let client = CID(klient.id);
         if(client)
         {
-            //console.log(wiadomosc, client);
+            console.log(wiadomosc, client);
             io.sockets.emit('wiadomosc', wiadomosc, client.Klient);
         }
     })
 
-    klient.on('witaj', (klientNazwa)=>{
+    klient.on('witaj', (klientNazwa, idKlienta)=>{
         console.log("Witaj", klientNazwa);
+        if(!idKlienta) return;
+        if(!klientNazwa) return;
 
-        let client = CID(klient.id);
+        let client = KID(idKlienta);
         if(!client)
         {
             ClientDB.push({
                 Klient: klientNazwa,
+                id: idKlienta,
                 socketid: klient.id
             });
-        } 
+
+        } else
+        {
+            client.Klient = klientNazwa;
+        }
+        io.sockets.emit('goscie', ClientDB);
+        
+        
+
 
     })
 

@@ -1,0 +1,23 @@
+section {
+    height: 80vh;
+    display: flex;
+}
+
+section > nav {
+    width: 20%;
+    height: 100%;
+    cursor: pointer;
+}
+
+section > main {
+    width: 80%;
+    height: 100%;
+}
+
+nav > .sel {
+    font-weight: bold;
+}
+
+footer > input {
+    width: 100%;
+}
