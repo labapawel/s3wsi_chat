@@ -39,9 +39,13 @@ function klikniecieKlienta(th, id){
     th.classList.add('sel');
 }
 
-socket.on('wiadomosc', (wiadomosc, nazwaKlienta)=>{
+socket.on('wiadomosc', (wiadomosc, nazwaKlienta, opcje)=>{
     let main = $("main");
-    let mess = `<div><h3>${nazwaKlienta}</h3><p>${wiadomosc}</p></div>`;
+    let mom = moment(opcje.time).format("YYYY-MM-DD HH:mm:ss");
+    let mess = `<div>
+                    <h3>${nazwaKlienta} - <span> ${mom}</h3>
+                    <p>${wiadomosc}</p>
+                </div>`;
     main.innerHTML += mess;
 })
 
@@ -68,4 +72,4 @@ function akt_licznik(){
         });
 }
 
-akt_licznik(); // akt. licznik na stronie www
+akt_licznik(); // akt. licznik na stro

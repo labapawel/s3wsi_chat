@@ -1,5 +1,6 @@
 const express = require('express'); // pobieramy klase express do serwera www
 const socketio = require('socket.io'); // import biblioteki socketio
+// const moment = require('moment');
 
 const app = express(); // pobieram instancje serwera
 
@@ -40,19 +41,25 @@ io.on('connection', (klient)=>{
     klient.on('wiadomosc', (wiadomosc)=>{
         
         let client = CID(klient.id);
+        console.log(client);
         if(client)
         {
             console.log(wiadomosc, client);
-            io.sockets.emit('wiadomosc', wiadomosc, client.Klient);
+            let option = {
+                time: new Date()
+            }
+            console.log(option);
+            io.sockets.emit('wiadomosc', wiadomosc, client.Klient, option);
         }
     })
 
     klient.on('witaj', (klientNazwa, idKlienta)=>{
-        console.log("Witaj", klientNazwa);
+        console.log("Witaj", klientNazwa,idKlienta);
         if(!idKlienta) return;
         if(!klientNazwa) return;
 
         let client = KID(idKlienta);
+     //   console.log(client);
         if(!client)
         {
             ClientDB.push({
@@ -64,6 +71,7 @@ io.on('connection', (klient)=>{
         } else
         {
             client.Klient = klientNazwa;
+            client.socketid=klient.id 
         }
         io.sockets.emit('goscie', ClientDB);
         

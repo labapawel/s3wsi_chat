@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.3",
+    "moment": "^2.30.1",
+    "momentjs": "^2.0.0",
     "socker.io": "0.0.0-alpha-beta",
     "socket.io": "^4.7.4"
   }
