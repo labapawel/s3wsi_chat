@@ -1,6 +1,6 @@
 // alias $ do document.querySelector
 const $ = (e)=>document.querySelector(e);
-const socket = io('ws:///');
+const socket = io('https:///');
 
 let idKlienta = localStorage.getItem('idKlienta');
 if(!idKlienta){
@@ -46,6 +46,7 @@ socket.on('wiadomosc', (wiadomosc, nazwaKlienta, opcje)=>{
                     <h3>${nazwaKlienta} - <span> ${mom}</h3>
                     <p>${wiadomosc}</p>
                 </div>`;
+                $("main").scrollTo(0,$("main").Height+100);
     main.innerHTML += mess;
 })
 

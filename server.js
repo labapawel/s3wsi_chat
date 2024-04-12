@@ -2,7 +2,18 @@ const express = require('express'); // pobieramy klase express do serwera www
 const socketio = require('socket.io'); // import biblioteki socketio
 // const moment = require('moment');
 
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('key.key', 'utf8');
+var certificate = fs.readFileSync('key.crt', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
+
 const app = express(); // pobieram instancje serwera
+
+let serwer = https.createServer(credentials, app);
+
 
 // zmienna dla licznika odw.
 let LicznikOdw = 0; 
@@ -11,8 +22,8 @@ let LicznikOdw = 0;
 app.use(express.static(__dirname+"/public")); 
 
 // otwieramy port 80 dla serwera WWW
-const serwer = app.listen(80, ()=>{
-    console.log("serwer start: http://localhost/");
+serwer.listen(443, ()=>{
+    console.log("serwer start: https://localhost/");
 });
 
 // dodanie soketów do komunikacji online

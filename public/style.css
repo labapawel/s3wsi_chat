@@ -12,6 +12,7 @@ section > nav {
 section > main {
     width: 80%;
     height: 100%;
+    overflow: scroll;
 }
 
 nav > .sel {
