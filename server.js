@@ -1,6 +1,7 @@
 const express = require('express'); // pobieramy klase express do serwera www
 const socketio = require('socket.io'); // import biblioteki socketio
 // const moment = require('moment');
+require('dotenv').config();
 
 var fs = require('fs');
 var http = require('http');
@@ -22,7 +23,7 @@ let LicznikOdw = 0;
 app.use(express.static(__dirname+"/public")); 
 
 // otwieramy port 80 dla serwera WWW
-serwer.listen(443, ()=>{
+serwer.listen(process.env.porthttps, ()=>{
     console.log("serwer start: https://localhost/");
 });
 
@@ -45,22 +46,43 @@ const KID = idKlienta => ClientDB.filter(e=>e.id == idKlienta)[0];
 //     return ClientDB.filter(e=>e.socketid == socketid)[0];
 // }
 
+function findClientById(socketList, clientId) {
+    for (const [socketId, socket] of socketList.entries()) {
+      if (socket.data.clientId === clientId) {
+        return socket;
+      }
+    }
+    return null; // Zwróć null, jeśli klient o danym id nie został znaleziony
+  }
+
 io.on('connection', (klient)=>{
     console.log("Klient nawiązał połączenie", klient.id);
 
     // 
-    klient.on('wiadomosc', (wiadomosc)=>{
+    klient.on('wiadomosc', (wiadomosc,userid)=>{
         
         let client = CID(klient.id);
         console.log(client);
+        console.log('sendid', userid); 
         if(client)
         {
-            console.log(wiadomosc, client);
+            // console.log(wiadomosc, client); 
             let option = {
                 time: new Date()
             }
-            console.log(option);
-            io.sockets.emit('wiadomosc', wiadomosc, client.Klient, option);
+            // console.log(option);
+            if(userid=='Wszyscy')
+                io.sockets.emit('wiadomosc', wiadomosc, client.Klient, option);
+            else {
+                let odbiorca = KID(userid);
+               // console.log('test',odbiorca)
+                if(odbiorca){
+                    const foundSocket = findClientById(io.sockets.sockets, userid);
+                    if(foundSocket)
+                                foundSocket.emit('wiadomosc', wiadomosc, client.Klient, option);
+                                klient.emit('wiadomosc', wiadomosc, client.Klient, option)
+                }
+                            }
         }
     })
 
